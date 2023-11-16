@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="negatives">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/negatives.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
