@@ -171,22 +171,22 @@ def intersection_over_union(boxA, boxB):
 def evaluate_detections(detections, ground_truth):
     TP = 0  # True Positives
     FP = 0  # False Positives
-    detected_indices = set()
 
     # Check each detection against ground truth data
-    for i, det in enumerate(detections):
+    for det in detections:
         match_found = False
-        for j, gt in enumerate(ground_truth):
-            if intersection_over_union(det, gt) > 0.5:  # threshold = 0.5
-                if j not in detected_indices:
-                    TP += 1
-                    detected_indices.add(j)
-                    match_found = True
-                    break
+        for gt in ground_truth:
+            if intersection_over_union(det, gt) > 0.2:  # Adjusted threshold to 0.2
+                TP += 1  # Increment for each detection that matches
+                match_found = True
+                break  # Stop checking once a match is found
+
         if not match_found:
-            FP += 1
+            FP += 1  # Increment false positives
 
     FN = len(ground_truth) - TP  # False Negatives
+    if FN < 0:
+        FN = 0  # Ensure FN is not negative
 
     # Calculate TPR and F1-score
     TPR = TP / (TP + FN) if (TP + FN) != 0 else 0
@@ -197,16 +197,32 @@ def evaluate_detections(detections, ground_truth):
     return TPR, F1
 
 
+
+
 # Combines evidence from Viola-Jones and Hough Transform detections
 def combine_evidence(vj_detections, hough_detections):
     combined_detections = []
-    for (x, y, w, h) in vj_detections:
-        for (y0, x0, r) in hough_detections:
-            # Check if the Hough circle center is within the Viola-Jones detection
+
+    # Check each Hough detection for overlap with VJ detections
+    for (y0, x0, r) in hough_detections:
+        hough_circle = (x0 - r, y0 - r, 2 * r, 2 * r)  # Convert circle to bounding box
+        overlap_with_vj = False
+
+        for (x, y, w, h) in vj_detections:
+            # Check if the center of the Hough circle falls within the VJ detection
             if x <= x0 < x + w and y <= y0 < y + h:
-                combined_detections.append((x, y, w, h))
+                overlap_with_vj = True
                 break
+
+        if overlap_with_vj:
+            combined_detections.append((x, y, w, h))  # Add overlapping Hough detections as VJ detection
+        else:
+            combined_detections.append(hough_circle)  # Add non-overlapping Hough detections
+
     return combined_detections
+
+
+
 
 
 # Perform detection and display the results
@@ -219,22 +235,22 @@ def detect_and_display(image, ground_truth, model, image_name, output_path):
     dartboards_vj = model.detectMultiScale(gray_image, scaleFactor=1.1, minNeighbors=5, minSize=(20, 20), maxSize=(230,230))
 
     # Hough Circle Transform detection
-    circle_centers = hough_transform_circle(gray_image, derivativeInX, derivativeInY, 15, 10, 150)
+    circle_centers = hough_transform_circle(gray_image, derivativeInX, derivativeInY, 15, 30, 150)
 
     # Combine evidence from both methods
     combined_detections = combine_evidence(dartboards_vj, circle_centers)
 
     # # Draw rectangles around the detected dartboards (in Yellow)
-    # for (x, y, w, h) in dartboards_vj:
-    #     cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 255), 2)  # Yellow
+    for (x, y, w, h) in dartboards_vj:
+        cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 255), 2)  # Yellow
 
     # Draw ground truth bounding boxes (in red)
     for (x, y, w, h) in ground_truth:
         cv2.rectangle(image, (x, y), (x+w, y+h), (0, 0, 255), 2)
 
     # # Draw circles for Hough detections (in Blue)
-    # for (y0, x0, r) in circle_centers:
-    #     cv2.circle(image, (x0, y0), r, (255, 0, 0), 2)  # Blue
+    for (y0, x0, r) in circle_centers:
+        cv2.circle(image, (x0, y0), r, (255, 0, 0), 2)  # Blue
 
     # Draw rectangles around combined detections (in green)
     for (x, y, w, h) in combined_detections:

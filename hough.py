@@ -1,8 +1,8 @@
 import cv2
 import numpy as np
 
-image = cv2.imread("Dartboard/dart11.jpg", cv2.IMREAD_GRAYSCALE)
-color_image = cv2.imread("Dartboard/dart11.jpg", cv2.IMREAD_COLOR)
+image = cv2.imread("Dartboard/dart0.jpg", cv2.IMREAD_GRAYSCALE)
+color_image = cv2.imread("Dartboard/dart0.jpg", cv2.IMREAD_COLOR)
 
 # Sobel's kernels
 # for derivative in the x direction
