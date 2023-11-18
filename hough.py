@@ -1,8 +1,8 @@
 import cv2
 import numpy as np
 
-image = cv2.imread("Dartboard/dart0.jpg", cv2.IMREAD_GRAYSCALE)
-color_image = cv2.imread("Dartboard/dart0.jpg", cv2.IMREAD_COLOR)
+image = cv2.imread("Dartboard/dart11.jpg", cv2.IMREAD_GRAYSCALE)
+color_image = cv2.imread("Dartboard/dart11.jpg", cv2.IMREAD_COLOR)
 
 # Sobel's kernels
 # for derivative in the x direction
@@ -112,8 +112,10 @@ def hough(binary_image, gradient_direction, min_radius, max_radius, threshold):
 def display_hough_space(hough_space):
     hough_2d = np.sum(hough_space, axis=2)
     hough_2d = (255 * (hough_2d / np.max(hough_2d))).astype(np.uint8)  # Normalization to [0, 255]
-    hough_display = cv2.applyColorMap(hough_2d, cv2.COLORMAP_JET)  # Using a colormap for better visualization
-    cv2.imshow('Hough Space', hough_display)
+    # hough_display = cv2.applyColorMap(hough_2d, cv2.COLORMAP_JET)  # Using a colormap for better visualization
+    # cv2.imshow('Hough Space', hough_display)
+    cv2.imshow('Hough Space', hough_2d)
+
 
 def draw_circles(image, circle_centers, min_radius):
     output = image.copy()

@@ -2,7 +2,8 @@ import cv2
 import os
 import numpy as np
 
-# The following part is using Lab3 code that i have implemented, to achieve hough transform
+# The following part is using Lab3 code that I have implemented, to achieve hough transform
+
 # Sobel's kernels
 # for derivative in the x direction
 derivativeInX = np.array([
@@ -223,21 +224,21 @@ def detect_and_display(image, ground_truth, model, image_name, output_path):
     # Combine evidence from both methods
     combined_detections = combine_evidence(dartboards_vj, circle_centers)
 
-    # Draw rectangles around the detected dartboards (in green)
-    for (x, y, w, h) in dartboards_vj:
-        cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
+    # # Draw rectangles around the detected dartboards (in Yellow)
+    # for (x, y, w, h) in dartboards_vj:
+    #     cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 255), 2)  # Yellow
 
     # Draw ground truth bounding boxes (in red)
     for (x, y, w, h) in ground_truth:
         cv2.rectangle(image, (x, y), (x+w, y+h), (0, 0, 255), 2)
 
-    # Draw circles for Hough detections (in Blue)
-    for (y0, x0, r) in circle_centers:
-        cv2.circle(image, (x0, y0), r, (255, 0, 0), 2)  # Blue
+    # # Draw circles for Hough detections (in Blue)
+    # for (y0, x0, r) in circle_centers:
+    #     cv2.circle(image, (x0, y0), r, (255, 0, 0), 2)  # Blue
 
-    # Draw rectangles around combined detections (in Yellow)
+    # Draw rectangles around combined detections (in green)
     for (x, y, w, h) in combined_detections:
-        cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 255), 2)  # Yellow
+        cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
 
     # Evaluate detections and get performance metrics
     TPR, F1 = evaluate_detections(combined_detections, ground_truth)
