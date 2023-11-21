@@ -1,8 +1,8 @@
 import cv2
 import numpy as np
 
-image = cv2.imread("Dartboard/dart0.jpg", cv2.IMREAD_GRAYSCALE)
-color_image = cv2.imread("Dartboard/dart0.jpg", cv2.IMREAD_COLOR)
+image = cv2.imread("Dartboard/dart8.jpg", cv2.IMREAD_GRAYSCALE)
+color_image = cv2.imread("Dartboard/dart8.jpg", cv2.IMREAD_COLOR)
 
 # Sobel's kernels
 # for derivative in the x direction
@@ -158,7 +158,7 @@ binary_image = threshold_image(magnitude_image, T)
 # Hough Transform
 min_radius = 10
 max_radius = 150
-hough_threshold = 15
+hough_threshold = 25
 hough_space = hough(binary_image, direction_image, min_radius, max_radius, hough_threshold)
 # Extract circle centers
 circle_centers = np.argwhere(hough_space > hough_threshold)

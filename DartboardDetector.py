@@ -198,7 +198,6 @@ def evaluate_detections(detections, ground_truth):
 
 
 
-
 # Combines evidence from Viola-Jones and Hough Transform detections
 def combine_evidence(vj_detections, hough_detections):
     combined_detections = []
@@ -220,9 +219,6 @@ def combine_evidence(vj_detections, hough_detections):
             combined_detections.append(hough_circle)  # Add non-overlapping Hough detections
 
     return combined_detections
-
-
-
 
 
 # Perform detection and display the results
