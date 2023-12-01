@@ -1,6 +1,7 @@
 import cv2
 import os
 import numpy as np
+import sys
 
 # The following part is using Lab3 code that I have implemented, to achieve hough transform
 
@@ -132,8 +133,7 @@ def hough_transform_circle(image, derivativeInX, derivativeInY, threshold, min_r
 
     return circle_centers
 
-
-# read ground truth bounding boxes from file
+# update for single parameter read in terminal
 def read_ground_truth(file_path):
     ground_truth = {}
     with open(file_path, 'r') as file:
@@ -141,11 +141,12 @@ def read_ground_truth(file_path):
             parts = line.strip().split(',')
             if len(parts) == 5:
                 image_name, x, y, w, h = parts
+                # Remove the extension from the image name if it exists
+                image_name = image_name.split('.')[0]
                 if image_name not in ground_truth:
                     ground_truth[image_name] = []
                 ground_truth[image_name].append((int(float(x)), int(float(y)), int(float(w)), int(float(h))))
     return ground_truth
-
 
 # IoU == Intersection over Union
 def intersection_over_union(boxA, boxB):
@@ -244,9 +245,9 @@ def detect_and_display(image, ground_truth, model, image_name, output_path):
     for (x, y, w, h) in ground_truth:
         cv2.rectangle(image, (x, y), (x+w, y+h), (0, 0, 255), 2)
 
-    # # Draw circles for Hough detections (in Blue)
-    for (y0, x0, r) in circle_centers:
-        cv2.circle(image, (x0, y0), r, (255, 0, 0), 2)  # Blue
+    # # # Draw circles for Hough detections (in Blue)
+    # for (y0, x0, r) in circle_centers:
+    #     cv2.circle(image, (x0, y0), r, (255, 0, 0), 2)  # Blue
 
     # Draw rectangles around combined detections (in green)
     for (x, y, w, h) in combined_detections:
@@ -271,46 +272,44 @@ def detect_and_display(image, ground_truth, model, image_name, output_path):
 
 
 if __name__ == '__main__':
+    # Check if the image filename is provided as a command line argument
+    if len(sys.argv) != 2:
+        print("Usage: python DartboardDetector.py [image_filename]")
+        sys.exit(1)
+
     # Load the trained model
     model = cv2.CascadeClassifier('Dartboardcascade/cascade.xml')
 
-    # Path of the image directory
-    path = 'Dartboard/'
+    # Get the image filename from the command line argument
+    image_filename = sys.argv[1]
+    image_path = os.path.join('Dartboard/', image_filename)
+
+    # Output path for the detected image
     output_path = 'output/'
-    # Make sure the output directory exists
     if not os.path.exists(output_path):
         os.makedirs(output_path)
+
+    # Read the image
+    image = cv2.imread(image_path)
+    if image is None:
+        print(f"Error: Image {image_filename} not found.")
+        sys.exit(1)
 
     # Path to the ground truth file
     groundtruth_path = 'groundtruth.txt'
     ground_truth_data = read_ground_truth(groundtruth_path)
 
-    # Loop through the images and evaluate performance
-    all_tpr = []
-    all_f1 = []
-    for i in range(16):
-        # Full path to the image
-        image_path = os.path.join(path, f'dart{i}.jpg')
-        image_name = f'dart{i}.jpg'
+    # Extract the filename without extension for ground truth matching
+    image_name_without_extension = os.path.splitext(image_filename)[0]
 
-        # Read the image
-        image = cv2.imread(image_path)
+    # Extract the ground truth bounding boxes for the current image
+    gt_bounding_boxes = ground_truth_data.get(image_name_without_extension, [])
 
-        # Extract the ground truth bounding boxes for the current image
-        gt_bounding_boxes = ground_truth_data.get(f'dart{i}', [])
 
-        # # Use the function to detect and display dartboards
-        # detect_and_display(image, gt_bounding_boxes, model)
+    # Detect dartboards and display the results
+    TPR, F1 = detect_and_display(image, gt_bounding_boxes, model, image_filename, output_path)
 
-        # Detect dartboards and display the results
-        TPR, F1 = detect_and_display(image, gt_bounding_boxes, model, image_name, output_path)
-
-        # Append the performance metrics
-        all_tpr.append(TPR)
-        all_f1.append(F1)
-
-    # Output the average TPR and F1 score
-    average_tpr = sum(all_tpr) / len(all_tpr)
-    average_f1 = sum(all_f1) / len(all_f1)
-    print(f'Average TPR: {average_tpr:.2f}')
-    print(f'Average F1 Score: {average_f1:.2f}')
+    # Save the detected image with bounding boxes
+    detected_image_path = os.path.join('output/', 'detected.jpg')
+    cv2.imwrite(detected_image_path, image)
+    print(f"Detected dartboards saved to: {detected_image_path}")
