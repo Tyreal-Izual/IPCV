@@ -37,6 +37,7 @@ The Dartboard Detector is a Python-based application for detecting dartboards in
    ```bash
    pip3 install opencv-python numpy
    ```
+   
 ### For the Windows and Mac (Intel & ARM) - Based Machine
 You may want to use ```Conda```
 1. Open a terminal and create virtual environment: 
