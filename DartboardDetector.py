@@ -238,8 +238,8 @@ def detect_and_display(image, ground_truth, model, image_name, output_path):
     combined_detections = combine_evidence(dartboards_vj, circle_centers)
 
     # # Draw rectangles around the detected dartboards (in Yellow)
-    for (x, y, w, h) in dartboards_vj:
-        cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 255), 2)  # Yellow
+    # for (x, y, w, h) in dartboards_vj:
+    #     cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 255), 2)  # Yellow
 
     # Draw ground truth bounding boxes (in red)
     for (x, y, w, h) in ground_truth:

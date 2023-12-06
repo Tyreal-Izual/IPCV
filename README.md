@@ -9,6 +9,24 @@ The Dartboard Detector is a Python-based application for detecting dartboards in
 - NumPy
 
 ## Installation
+### For MVB-2.11/1.15 Lab Machine in University of Bristol
+1. Ensure ```Anaconda``` is ready to use, you may need to: 
+   ```bash
+   module load anaconda/3-2023
+   ```
+2. Create a virtual environment using conda:  
+   ```bash
+   conda create -n ipcv python=3.8
+   ```
+3. Activate the virtual environment:
+   ```bash
+   conda activate ipcv
+   ```
+4. Install OpenCV packages:
+   ```bash
+   pip install numpy opencv-python numpy
+   ```
+
 ### For the Linux-Based Machine
 1. Ensure that ```Python 3.8+``` is installed on your system.
 2. Install ```OpenCV``` and ```NumPy``` libraries. You can install them using pip:
@@ -25,7 +43,7 @@ You may want to use ```Conda```
     ```bash 
     conda create -n ipcv python=3.8
     ```
-2. Activate your environment: 
+2. Create a virtual environment:
     ```bash
     conda activate myproject
     ```
@@ -33,21 +51,9 @@ You may want to use ```Conda```
     ```bash
     pip install --upgrade pip
     ```
-   or
-   ```bash
-   pip3 install --upgrade pip
-    ```
 4. Install OpenCV packages:
     ```bash
     pip install numpy opencv-python
-    ```
-    or
-    ```bash
-    conda install numpy 
-    ```
-   then
-    ```bash 
-   conda install -c menpo opencv
     ```
 
 ## Usage
@@ -83,3 +89,6 @@ Example:
 - The script is configured to work with images in the `````'Dartboard/'````` directory. Ensure your images are placed
   in this directory before running the script.
 - For more information, please refer to `````'Instruction.md'`````
+
+---
+*This README is part of the Shape Detection, developed as part of the coursework in COMS30076 at the University of Bristol.*
